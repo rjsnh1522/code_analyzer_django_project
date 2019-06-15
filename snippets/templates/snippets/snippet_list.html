@@ -1,0 +1,83 @@
+{% extends 'snippets/base.html' %}
+{% block content %}
+<style>
+
+</style>
+
+<div class="editorWrapper">
+  <div class="container">
+    <div class="row">
+        <div class="col-md-8">
+          <div id="editor">
+          </div>
+<!--          <iframe id="iframe" frameborder="0"></iframe>-->
+        </div>
+      <div class="col-md-4">
+        <h1>Coding language: <span id="coding_lang"></span></h1>
+        <div class="row">
+            <div>
+              <button class="btn btn-success">Analyze Code</button>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    window.editor = ace.edit("editor");
+    editor.setTheme("ace/theme/monokai");
+
+    editor.focus();
+    editor.getSession().on('change', function(){
+      update();
+    })
+    connect_socket()
+    function update(){
+      var code_value = editor.getValue();
+      console.log(code_value.length > 10)
+      if(code_value.length > 10){
+         send_ajax_request(code_value)
+      }
+
+    }
+    function connect_socket(){
+      window.web_socket = new WebSocket("ws://localhost:8000/ws/code_snippet/");
+
+      web_socket.onmessage = function(e){
+          var data = JSON.parse(e.data)
+          console.log(data)
+          if(data['type'] === 'code_lang'){
+            var lang = data['result']
+            $('#coding_lang').html(lang)
+            console.log("ace/mode/"+lang.toLowerCase())
+             editor.session.setMode({
+              path: "ace/mode/"+lang.toLowerCase(),
+              v:Date.now()
+             });
+          }
+
+      }
+
+
+    }
+
+    function send_ajax_request(code_value){
+      $.ajax({
+        url:'/check_code_language/',
+        method:'POST',
+        data: {'code_value': code_value, csrfmiddlewaretoken: window.CSRF_TOKEN},
+        success:function(data){
+          console.log(data)
+        },
+        error: function(data){
+          console.log(data)
+        }
+      })
+    }
+
+})
+
+</script>
+{% endblock content %}
