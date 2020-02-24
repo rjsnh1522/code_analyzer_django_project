@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+INTERNAL_IPS =['127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
@@ -37,10 +37,34 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'debug_toolbar',
     'background_task',
     'channels',
     'snippets',
+    'manytomany',
     'django_extensions',
+]
+
+INSTALLED_APPS += [
+ 'blog',
+ 'wagtail.contrib.modeladmin',
+ 'wagtail.contrib.forms',
+ 'wagtail.contrib.redirects',
+ 'wagtail.embeds',
+ 'wagtail.sites',
+ 'wagtail.users',
+ 'wagtail.snippets',
+ 'wagtail.documents',
+ 'wagtail.images',
+ 'wagtail.search',
+ 'wagtail.admin',
+ 'wagtail.core',
+ "wagtail.contrib.routable_page",
+ 'wagtailmenus',
+ 'el_pagination',
+ 'modelcluster',
+ 'taggit',
+ 'wagtailcodeblock',
 ]
 
 MIDDLEWARE = [
@@ -51,6 +75,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    'wagtail.core.middleware.SiteMiddleware',
+    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
 ]
 
 ROOT_URLCONF = 'cast.urls'
@@ -58,7 +85,7 @@ ROOT_URLCONF = 'cast.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,6 +98,18 @@ TEMPLATES = [
     },
 ]
 
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/1",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "dashboard_cache"
+    }
+}
+CACHE_TTL = 60 * 15
+
 # WSGI_APPLICATION = 'cast.wsgi.application'
 
 
@@ -78,10 +117,23 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'cast_hiring',
+            'USER': '',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': '',
+        },
+        'cast_hiring_2': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'cast_hiring_2',
+            'USER': '',
+            'PASSWORD': '',
+            'HOST': 'localhost',
+            'PORT': '',
+        }
+
 }
 
 
@@ -133,6 +185,12 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 1
 # Channels
+WAGTAIL_SITE_NAME = 'Wagtail'
+SITE_ID = 1
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
+
+
 
 ASGI_APPLICATION = "cast.routing.application"
 CHANNEL_LAYERS = {

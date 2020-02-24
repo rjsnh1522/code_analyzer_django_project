@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<style>
+
+</style>
+
+<div class="editorWrapper">
+  <div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Body</th>
+                  <th scope="col">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                    {% for sni  in snippet %}
+                          <tr>
+                              <td>.</td>
+                              <td>{{sni.title}}</td>
+                              <td>{{sni.body}}</td>
+                              <td>{{sni.created}}</td>
+                            </tr>
+                    {%endfor %}
+                 </tbody>
+            </table>
+
+        </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
