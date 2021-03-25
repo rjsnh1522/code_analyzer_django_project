@@ -75,7 +75,7 @@ pylint-django==2.0.9
 pylint-flask==0.6
 pylint-plugin-utils==0.5
 pytz==2019.1
-PyYAML==5.1.1
+PyYAML==5.4
 redis==3.3.11
 requests==2.22.0
 requirements-detector==0.6
